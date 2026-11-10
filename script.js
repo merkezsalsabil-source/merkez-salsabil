@@ -556,11 +556,35 @@
         var image = trigger.getAttribute("data-image");
         var title = trigger.getAttribute("data-title") || "Affiche du Merkez Salsabil";
         if (!image) return;
-        viewerImage.src = image;
-        viewerImage.alt = title;
-        viewerTitle.textContent = title;
-        viewer.showModal();
-        if (viewerClose) viewerClose.focus();
+        function openViewer() {
+          viewerImage.src = image;
+          viewerImage.alt = title;
+          viewerTitle.textContent = title;
+          viewer.showModal();
+          if (viewerClose) viewerClose.focus();
+        }
+
+        // L’affiche « s’envole » de sa vignette vers la visionneuse quand le navigateur le permet.
+        var thumbnail = trigger.querySelector("img");
+        if (reducedMotion || !thumbnail || typeof document.startViewTransition !== "function") {
+          openViewer();
+          return;
+        }
+        var page = document.documentElement;
+        page.classList.add("fx-vt-poster");
+        thumbnail.style.viewTransitionName = "fx-poster";
+        var transition = document.startViewTransition(function () {
+          thumbnail.style.viewTransitionName = "";
+          openViewer();
+          viewerImage.style.viewTransitionName = "fx-poster";
+          return typeof viewerImage.decode === "function" ? viewerImage.decode().catch(function () {}) : undefined;
+        });
+        if (transition.ready) transition.ready.catch(function () {});
+        transition.finished.catch(function () {}).then(function () {
+          viewerImage.style.viewTransitionName = "";
+          thumbnail.style.viewTransitionName = "";
+          page.classList.remove("fx-vt-poster");
+        });
       });
     });
     if (viewerClose) viewerClose.addEventListener("click", function () { viewer.close(); });
@@ -578,5 +602,325 @@
       event.preventDefault();
       target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
     });
+  });
+})();
+
+/* ==========================================================================
+   Effets modernes — couche additive (novembre 2026)
+   Aucune dépendance. Chaque effet se désactive si l’utilisateur a demandé
+   moins d’animations, et les effets de souris ne s’activent pas au tactile.
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  var root = document.getElementById("ms-site");
+  if (!root) return;
+
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var header = root.querySelector(".site-header");
+  var nav = root.querySelector(".site-nav");
+  function all(selector, scope) { return Array.prototype.slice.call((scope || root).querySelectorAll(selector)); }
+  function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+
+  /* Bouton de retour en haut (utile même sans animation) */
+  var topButton = document.createElement("button");
+  topButton.type = "button";
+  topButton.className = "fx-top";
+  topButton.setAttribute("aria-label", "Revenir en haut de la page");
+  topButton.innerHTML = '<svg viewBox="0 0 50 50" aria-hidden="true"><circle class="fx-top-track" cx="25" cy="25" r="22"/><circle class="fx-top-ring" cx="25" cy="25" r="22"/></svg><span aria-hidden="true">↑</span>';
+  document.body.appendChild(topButton);
+  var topRing = topButton.querySelector(".fx-top-ring");
+  var ringLength = 2 * Math.PI * 22;
+  topButton.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+  });
+
+  /* Découpe d’un titre en lettres ou en mots, sans casser l’arabe ni l’accessibilité */
+  function splitHeading(heading, byChar) {
+    var index = 0;
+    var label = heading.textContent.replace(/\s+/g, " ").trim();
+    function walk(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (child) {
+        if (child.nodeType === 1) {
+          if (child.classList.contains("sr-only") || child.getAttribute("lang") === "ar") return;
+          walk(child);
+          return;
+        }
+        if (child.nodeType !== 3 || !child.textContent.trim()) return;
+        var fragment = document.createDocumentFragment();
+        child.textContent.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { fragment.appendChild(document.createTextNode(" ")); return; }
+          var word = document.createElement("span");
+          word.className = "fx-word";
+          if (byChar) {
+            Array.from(part).forEach(function (character) {
+              var letter = document.createElement("span");
+              letter.className = "fx-char";
+              letter.textContent = character;
+              letter.style.setProperty("--i", String(index));
+              index += 1;
+              word.appendChild(letter);
+            });
+          } else {
+            word.textContent = part;
+            word.style.setProperty("--i", String(index));
+            index += 1;
+          }
+          fragment.appendChild(word);
+        });
+        child.parentNode.replaceChild(fragment, child);
+      });
+    }
+    walk(heading);
+    heading.setAttribute("aria-label", label);
+    heading.classList.add("fx-split");
+    if (!byChar) heading.classList.add("fx-split-words");
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(function () { heading.classList.add("is-in"); });
+    });
+  }
+
+  if (!reduced) {
+    all("main h1:not(.sr-only)").forEach(function (heading) {
+      splitHeading(heading, heading.textContent.trim().length <= 26);
+    });
+
+    /* Cascade : les éléments voisins apparaissent l’un après l’autre */
+    var revealGroups = new Map();
+    all("[data-reveal]").forEach(function (item) {
+      var position = revealGroups.get(item.parentElement) || 0;
+      item.style.setProperty("--fx-delay", Math.min(position, 4) * 90 + "ms");
+      revealGroups.set(item.parentElement, position + 1);
+    });
+
+    /* Les cartes et listes sans animation d’origine montent en douceur */
+    if ("IntersectionObserver" in window) {
+      var riseItems = all(".poster-card, .program-item, .faq-item, .pricing-fee-item, .merkez-foundation-card, .merkez-quote-card, .support-payment-card, .contact-channel, .intensive-info-card, .ramadan-day")
+        .filter(function (item) { return !item.hasAttribute("data-reveal") && !item.closest("[data-reveal]"); });
+      var riseObserver = new IntersectionObserver(function (entries) {
+        var batch = 0;
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.style.setProperty("--fx-delay", Math.min(batch, 7) * 70 + "ms");
+          batch += 1;
+          entry.target.classList.add("is-in");
+          riseObserver.unobserve(entry.target);
+        });
+      }, { threshold: 0.08, rootMargin: "0px 0px -4% 0px" });
+      riseItems.forEach(function (item) { item.classList.add("fx-rise"); riseObserver.observe(item); });
+    }
+  }
+
+  /* Paragraphes éclairés mot à mot au fil du défilement */
+  var wordBlocks = [];
+  if (!reduced) {
+    all(".intro-lead, .approach-copy blockquote, [data-fx-words]").forEach(function (block) {
+      if (block.children.length) return;
+      var words = block.textContent.split(/(\s+)/);
+      block.textContent = "";
+      var spans = [];
+      words.forEach(function (part) {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { block.appendChild(document.createTextNode(" ")); return; }
+        var span = document.createElement("span");
+        span.className = "fx-w";
+        span.textContent = part;
+        block.appendChild(span);
+        spans.push(span);
+      });
+      block.classList.add("fx-words");
+      wordBlocks.push({ element: block, spans: spans, lit: -1 });
+    });
+  }
+
+  /* Trame « MERKEZ SALSABIL » dans l’accueil */
+  var hero = root.querySelector(".hero");
+  if (hero && !reduced) {
+    var lattice = document.createElement("div");
+    lattice.className = "fx-lattice";
+    lattice.setAttribute("aria-hidden", "true");
+    var latticeLine = new Array(15).join("MERKEZ SALSABIL    ");
+    for (var latticeRow = 0; latticeRow < 34; latticeRow += 1) {
+      var latticeText = document.createElement("span");
+      latticeText.textContent = latticeLine;
+      lattice.appendChild(latticeText);
+    }
+    // Placée après le voile rose de la section Femmes, sinon celui-ci la recouvre.
+    var heroWash = hero.querySelector(".hero-theme-wash");
+    hero.insertBefore(lattice, heroWash ? heroWash.nextSibling : hero.firstChild);
+    if (finePointer) {
+      hero.addEventListener("pointermove", function (event) {
+        var bounds = hero.getBoundingClientRect();
+        lattice.style.setProperty("--fx-lx", (event.clientX - bounds.left) + "px");
+        lattice.style.setProperty("--fx-ly", (event.clientY - bounds.top) + "px");
+      }, { passive: true });
+    } else {
+      lattice.classList.add("is-drifting");
+    }
+  }
+
+  if (finePointer && !reduced) {
+    /* Inclinaison 3D de l’affiche */
+    var carousel = root.querySelector(".hero-carousel");
+    var stage = carousel && carousel.querySelector(".hero-carousel-stage");
+    if (stage) {
+      var glare = document.createElement("span");
+      glare.className = "fx-glare";
+      glare.setAttribute("aria-hidden", "true");
+      stage.appendChild(glare);
+      carousel.classList.add("fx-tilt");
+      stage.addEventListener("pointermove", function (event) {
+        var bounds = stage.getBoundingClientRect();
+        var x = clamp((event.clientX - bounds.left) / bounds.width, 0, 1);
+        var y = clamp((event.clientY - bounds.top) / bounds.height, 0, 1);
+        stage.style.setProperty("--fx-ry", ((x - 0.5) * 13).toFixed(2) + "deg");
+        stage.style.setProperty("--fx-rx", ((0.5 - y) * 10).toFixed(2) + "deg");
+        stage.style.setProperty("--fx-gx", (x * 100).toFixed(1) + "%");
+        stage.style.setProperty("--fx-gy", (y * 100).toFixed(1) + "%");
+        carousel.classList.add("is-tilting");
+      }, { passive: true });
+      stage.addEventListener("pointerleave", function () {
+        carousel.classList.remove("is-tilting");
+        stage.style.setProperty("--fx-rx", "0deg");
+        stage.style.setProperty("--fx-ry", "0deg");
+      });
+    }
+
+    /* Halo sur les cartes */
+    all(".student-testimonial, .merkez-foundation-card, .merkez-quote-card, .support-payment-card, .intensive-info-card, .contact-channel, .pricing-fee-item").forEach(function (card) {
+      if (window.getComputedStyle(card).position === "static") card.style.position = "relative";
+      var glow = document.createElement("span");
+      glow.className = "fx-glow";
+      glow.setAttribute("aria-hidden", "true");
+      card.appendChild(glow);
+      card.classList.add("fx-glow-host");
+      card.addEventListener("pointermove", function (event) {
+        var bounds = card.getBoundingClientRect();
+        glow.style.setProperty("--fx-x", (event.clientX - bounds.left) + "px");
+        glow.style.setProperty("--fx-y", (event.clientY - bounds.top) + "px");
+      }, { passive: true });
+    });
+
+    /* Boutons aimantés */
+    all(".nav-contact, .line-link, .carousel-arrow, .carousel-toggle, .support-proceed, .contact-form-submit, .testimonial-toggle").concat([topButton]).forEach(function (button) {
+      button.classList.add("fx-magnetic");
+      button.addEventListener("pointermove", function (event) {
+        var bounds = button.getBoundingClientRect();
+        var x = (event.clientX - bounds.left - bounds.width / 2) * 0.28;
+        var y = (event.clientY - bounds.top - bounds.height / 2) * 0.38;
+        button.classList.add("is-pulled");
+        button.style.translate = x.toFixed(1) + "px " + y.toFixed(1) + "px";
+      }, { passive: true });
+      button.addEventListener("pointerleave", function () {
+        button.classList.remove("is-pulled");
+        button.style.translate = "";
+      });
+    });
+  }
+
+  /* Effets liés au défilement, regroupés dans une seule boucle */
+  var approachWord = root.querySelector(".approach-arabic");
+  var lastScroll = window.scrollY || 0;
+  var frame = 0;
+
+  function onScrollFrame() {
+    frame = 0;
+    var scrollY = window.scrollY || window.pageYOffset || 0;
+    var viewport = window.innerHeight;
+    var pageHeight = document.documentElement.scrollHeight - viewport;
+    var delta = scrollY - lastScroll;
+
+    topButton.classList.toggle("is-shown", scrollY > 520);
+    topRing.style.strokeDashoffset = String(ringLength * (1 - (pageHeight > 0 ? clamp(scrollY / pageHeight, 0, 1) : 0)));
+
+    if (header && !reduced) {
+      var menuOpen = nav && nav.classList.contains("is-open");
+      if (scrollY < 220 || delta < -4 || menuOpen || header.contains(document.activeElement)) header.classList.remove("fx-header-hidden");
+      else if (delta > 6) header.classList.add("fx-header-hidden");
+    }
+
+    if (!reduced) {
+      if (approachWord) {
+        var bounds = approachWord.parentElement.getBoundingClientRect();
+        if (bounds.bottom > 0 && bounds.top < viewport) {
+          var offset = (bounds.top + bounds.height / 2 - viewport / 2) / viewport;
+          approachWord.style.translate = "0 " + (offset * -70).toFixed(1) + "px";
+        }
+      }
+
+      wordBlocks.forEach(function (block) {
+        var rect = block.element.getBoundingClientRect();
+        if (rect.bottom < -200 || rect.top > viewport + 200) return;
+        var progress = clamp((viewport * 0.9 - rect.top) / (viewport * 0.45 + rect.height), 0, 1);
+        var lit = Math.round(progress * block.spans.length);
+        if (lit === block.lit) return;
+        block.lit = lit;
+        block.spans.forEach(function (span, spanIndex) { span.classList.toggle("is-lit", spanIndex < lit); });
+      });
+    }
+    lastScroll = scrollY;
+  }
+
+  window.addEventListener("scroll", function () {
+    if (!frame) frame = window.requestAnimationFrame(onScrollFrame);
+  }, { passive: true });
+  window.addEventListener("resize", function () {
+    if (!frame) frame = window.requestAnimationFrame(onScrollFrame);
+  }, { passive: true });
+  onScrollFrame();
+})();
+
+/* Une transition de page interrompue (retour rapide, onglet masqué) ne doit pas remonter d’erreur. */
+window.addEventListener("pagereveal", function (event) {
+  if (!event.viewTransition) return;
+  event.viewTransition.ready.catch(function () {});
+  event.viewTransition.finished.catch(function () {});
+});
+
+/* Sous-menus de la navigation : ouverture au clic (tactile, clavier), fermeture à l’extérieur ou avec Échap. */
+(function () {
+  "use strict";
+  var groups = Array.prototype.slice.call(document.querySelectorAll("[data-nav-group]"));
+  if (!groups.length) return;
+  var compact = window.matchMedia("(max-width: 950px)");
+
+  function setOpen(group, open) {
+    var toggle = group.querySelector(".nav-group-toggle");
+    group.classList.toggle("is-open", open);
+    if (toggle) toggle.setAttribute("aria-expanded", String(open));
+  }
+  function closeAll(except) {
+    groups.forEach(function (group) { if (group !== except) setOpen(group, false); });
+  }
+
+  groups.forEach(function (group) {
+    var toggle = group.querySelector(".nav-group-toggle");
+    if (!toggle) return;
+    toggle.addEventListener("click", function () {
+      var open = !group.classList.contains("is-open");
+      closeAll(group);
+      setOpen(group, open);
+    });
+    group.addEventListener("mouseleave", function () {
+      if (!compact.matches) setOpen(group, false);
+    });
+    // Dans le menu mobile, le groupe de la page en cours est déjà déplié.
+    if (compact.matches && group.classList.contains("is-current")) setOpen(group, true);
+  });
+
+  document.addEventListener("click", function (event) {
+    // Dans le menu mobile, les groupes restent dans l’état choisi par le visiteur.
+    if (!compact.matches && !event.target.closest("[data-nav-group]")) closeAll(null);
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key !== "Escape") return;
+    var active = document.activeElement && document.activeElement.closest("[data-nav-group]");
+    closeAll(null);
+    if (active) {
+      var toggle = active.querySelector(".nav-group-toggle");
+      if (toggle) { toggle.focus(); toggle.blur(); }
+    }
   });
 })();

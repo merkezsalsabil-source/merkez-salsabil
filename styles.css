@@ -1353,3 +1353,303 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px soli
   .regulation-section { padding:22px 19px; }
   .regulation-section p,.regulation-section li { font-size:12px; }
 }
+
+/* ==========================================================================
+   Effets modernes — couche additive (novembre 2026)
+   Tout ce bloc peut être retiré sans toucher au reste du site.
+   Chaque effet respecte « prefers-reduced-motion ».
+   ========================================================================== */
+
+/* 1. Transitions fluides entre les pages (View Transitions API) */
+@view-transition { navigation: auto; }
+.site-header { view-transition-name: site-header; }
+html.fx-vt-poster .site-header { view-transition-name: none; }
+html:not(.fx-vt-poster)::view-transition-old(root) { animation: fx-page-out .28s ease both; }
+html:not(.fx-vt-poster)::view-transition-new(root) { animation: fx-page-in .55s cubic-bezier(.2,.75,.25,1) both; }
+::view-transition-group(fx-poster) { animation-duration: .5s; animation-timing-function: cubic-bezier(.2,.75,.25,1); }
+@keyframes fx-page-out { to { opacity: 0; transform: translateY(-10px); } }
+@keyframes fx-page-in { from { opacity: 0; transform: translateY(18px); } }
+
+/* 2. Titres : apparition lettre par lettre ou mot par mot */
+.fx-split .fx-word { display: inline-block; white-space: nowrap; }
+.fx-split .fx-word, .fx-split .fx-char { color: inherit !important; }
+.fx-split .fx-char, .fx-split.fx-split-words .fx-word { display: inline-block; opacity: 0; transform: translateY(.42em) rotateX(-70deg); transform-origin: 50% 100%; filter: blur(8px); }
+.fx-split.is-in .fx-char, .fx-split.fx-split-words.is-in .fx-word { animation: fx-char-in .9s var(--ease) both; animation-delay: calc(var(--i) * 34ms + 120ms); }
+.fx-split.fx-split-words.is-in .fx-word { animation-delay: calc(var(--i) * 70ms + 120ms); }
+@keyframes fx-char-in { to { opacity: 1; transform: none; filter: none; } }
+
+/* 3. Entrées au défilement : flou léger et décalage en cascade */
+.has-reveal [data-reveal] { filter: blur(7px); transition: opacity .8s var(--ease) var(--fx-delay, 0ms), transform .8s var(--ease) var(--fx-delay, 0ms), filter .8s var(--ease) var(--fx-delay, 0ms); }
+.has-reveal [data-reveal].is-visible { filter: none; }
+.fx-rise { opacity: 0; }
+.fx-rise.is-in { opacity: 1; animation: fx-rise .85s var(--ease) var(--fx-delay, 0ms) backwards; }
+@keyframes fx-rise { from { opacity: 0; transform: translateY(28px); filter: blur(6px); } }
+
+/* 4. Paragraphes qui « s’allument » mot à mot pendant la lecture */
+.fx-words .fx-w { opacity: .24; transition: opacity .55s ease; }
+.fx-words .fx-w.is-lit { opacity: 1; }
+
+/* 5. Trame typographique « MERKEZ SALSABIL » révélée par le curseur dans l’accueil */
+.fx-lattice { position: absolute; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; opacity: .5; display: flex; flex-direction: column; justify-content: center; gap: 26px; color: #a98a4c; font-size: 12px; font-weight: 700; letter-spacing: .34em; line-height: 1; white-space: nowrap; text-transform: uppercase; user-select: none;
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 0%, rgba(0,0,0,.5) 45%, transparent 100%); mask-image: radial-gradient(circle closest-side, #000 0%, rgba(0,0,0,.5) 45%, transparent 100%);
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-size: 620px 620px; mask-size: 620px 620px;
+  -webkit-mask-position: calc(var(--fx-lx, 70%) - 310px) calc(var(--fx-ly, 40%) - 310px); mask-position: calc(var(--fx-lx, 70%) - 310px) calc(var(--fx-ly, 40%) - 310px);
+  transition: opacity .8s ease, color .8s ease; }
+.fx-lattice.is-drifting { animation: fx-lattice-drift 16s ease-in-out infinite alternate; }
+.fx-lattice span { display: block; }
+.fx-lattice span:nth-child(even) { margin-left: -118px; }
+.hero.is-women .fx-lattice { color: #b98279; }
+@media (max-width: 760px) { .fx-lattice { opacity: .36; gap: 20px; font-size: 9px; -webkit-mask-size: 380px 380px; mask-size: 380px 380px; } .fx-lattice span:nth-child(even) { margin-left: -84px; } }
+@keyframes fx-lattice-drift { from { -webkit-mask-position: -10% 10%; mask-position: -10% 10%; } to { -webkit-mask-position: 110% 70%; mask-position: 110% 70%; } }
+
+/* 6. Affiche du carrousel : inclinaison 3D et reflet qui suivent la souris */
+.hero-carousel.fx-tilt .hero-carousel-stage { transform: perspective(1000px) rotateX(var(--fx-rx, 0deg)) rotateY(var(--fx-ry, 0deg)) rotate(1deg); transform-style: preserve-3d; }
+.hero-carousel.fx-tilt.is-tilting .hero-carousel-stage { transform: perspective(1000px) rotateX(var(--fx-rx, 0deg)) rotateY(var(--fx-ry, 0deg)) translateY(-4px); transition: transform .14s ease-out, box-shadow .4s ease, border-color .8s ease, background .8s ease; }
+.hero-carousel.fx-tilt .hero-carousel-sticker { transform: translateZ(38px) rotate(8deg); }
+.fx-glare { position: absolute; z-index: 3; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .45s ease; background: radial-gradient(circle at var(--fx-gx, 50%) var(--fx-gy, 50%), rgba(255,255,255,.38), rgba(255,255,255,.08) 38%, transparent 62%); }
+.hero-carousel.is-tilting .fx-glare { opacity: 1; }
+
+/* 7. Halo doré qui suit le curseur sur les cartes */
+.fx-glow { position: absolute; z-index: 1; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s ease; background: radial-gradient(260px circle at var(--fx-x, 50%) var(--fx-y, 50%), rgba(206,172,100,.2), transparent 70%); }
+.fx-glow-host:hover > .fx-glow { opacity: 1; }
+
+/* 8. Boutons « aimantés » et retour tactile */
+.fx-magnetic { transition: translate .45s var(--ease); will-change: translate; }
+.fx-magnetic.is-pulled { transition: translate .12s ease-out; }
+button:active, .nav-contact:active, .line-link:active { scale: .97; }
+
+/* 9. Navigation : soulignement animé et en-tête qui s’efface en descendant */
+.site-header { transition: background .25s ease, box-shadow .25s ease, transform .5s var(--ease); }
+.site-header.fx-header-hidden { transform: translateY(-102%); }
+@media (min-width: 951px) and (hover: hover) {
+  .site-nav > a:not(.nav-contact) { padding-block: 7px; background: linear-gradient(currentColor, currentColor) no-repeat 100% 100% / 0 1px; transition: color .2s ease, background-size .45s var(--ease); }
+  .site-nav > a:not(.nav-contact):hover { background-size: 100% 1px; background-position: 0 100%; }
+  .site-nav > a[aria-current="page"] { text-decoration: none; background-size: 100% 1px; }
+}
+@media (min-width: 951px) {
+  .site-nav { gap: clamp(12px, 1.9vw, 40px); }
+  .site-nav > a { white-space: nowrap; }
+}
+
+/* 10. Bouton de retour en haut avec anneau de progression */
+.fx-top { position: fixed; z-index: 240; right: clamp(14px, 2.4vw, 30px); bottom: clamp(14px, 2.4vw, 30px); width: 50px; height: 50px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; color: var(--gold-dark); background: rgba(255,254,250,.86); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 10px 28px rgba(52,44,29,.16); cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(14px) scale(.9); transition: opacity .35s ease, transform .45s var(--ease), visibility .35s, box-shadow .3s ease; }
+.fx-top.is-shown { opacity: 1; visibility: visible; transform: none; }
+.fx-top:hover { box-shadow: 0 14px 34px rgba(52,44,29,.24); }
+.fx-top svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.fx-top circle { fill: none; stroke-width: 2; }
+.fx-top .fx-top-track { stroke: rgba(141,113,60,.18); }
+.fx-top .fx-top-ring { stroke: var(--gold); stroke-linecap: round; stroke-dasharray: 138.2; stroke-dashoffset: 138.2; }
+.fx-top span { position: relative; font-size: 17px; line-height: 1; transition: transform .3s var(--ease); }
+.fx-top:hover span { transform: translateY(-3px); }
+
+/* 11. Finitions */
+.student-carousel.is-looping .student-carousel-viewport { -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.hero-bottom i { display: inline-block; animation: fx-bob 1.9s ease-in-out infinite; }
+@keyframes fx-bob { 50% { transform: translateY(5px); } }
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+  .faq-item::details-content { block-size: 0; overflow: clip; transition: block-size .5s var(--ease), content-visibility .5s allow-discrete; }
+  .faq-item[open]::details-content { block-size: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  .has-reveal [data-reveal], .fx-rise { filter: none; opacity: 1; }
+  .fx-words .fx-w { opacity: 1; }
+  .fx-lattice, .fx-glare { display: none; }
+  .hero-bottom i { animation: none; }
+  .site-header.fx-header-hidden { transform: none; }
+}
+
+/* ==========================================================================
+   Corrections responsive (novembre 2026)
+   Titre d’accueil qui ne chevauche plus l’affiche, accueil empilé sur
+   téléphone, zones tactiles plus grandes et petits textes relevés.
+   ========================================================================== */
+
+/* Le titre d’accueil se cale sur la largeur réelle de sa colonne */
+@supports (container-type: inline-size) {
+  .hero-copy { container-type: inline-size; }
+  .hero h1 { font-size: min(clamp(68px, 10vw, 142px), 18.6cqi); }
+  @media (max-width: 1000px) { .hero h1 { font-size: min(clamp(65px, 10vw, 104px), 18.6cqi); } }
+  @media (max-width: 760px) { .hero h1 { font-size: min(clamp(48px, 12.5vw, 82px), 18.6cqi); } }
+}
+
+/* Petits textes : 11 px minimum pour rester lisibles */
+.testimonial-author, .line-link, .ramadan-day-number, .merkez-card-number, .merkez-quote-label, .audience-kicker, .pricing-poster-label, .pricing-eyebrow, .poster-filter, .contact-field-optional, .regulation-updated, .ramadan-tracker-label, .footer-follow-copy small, .footer-bottom small, .footer-bottom > span { font-size: 11px; }
+.section-index, .hero-kicker { font-size: 11px; }
+.carousel-toggle { width: 34px; height: 34px; flex-basis: 34px; }
+
+/* Menu d’ordinateur entre 951 et 1100 px : 10 px au lieu de 8 px */
+@media (min-width: 951px) and (max-width: 1100px) {
+  .brand-name { font-size: 10px; }
+  .site-nav { gap: 9px; }
+  .site-nav > a { font-size: 10px; letter-spacing: .03em; }
+  .site-nav .nav-contact { font-size: 10px; gap: 6px; padding-inline: 9px; }
+}
+
+/* Tablette et grand téléphone, affiche à côté du titre */
+@media (min-width: 621px) and (max-width: 760px) {
+  .carousel-audience small { font-size: 8px; }
+  .carousel-audience strong { font-size: 11px; }
+  .carousel-arrow, .carousel-toggle { width: 36px; height: 36px; flex-basis: 36px; font-size: 14px; }
+  .carousel-count { display: inline; font-size: 10px; }
+}
+
+/* Téléphone : le titre passe au-dessus, l’affiche en dessous */
+@media (max-width: 620px) {
+  .hero { min-height: 0; padding: 196px 0 96px; }
+  .hero-content { width: calc(100% - 44px); grid-template-columns: minmax(0, 1fr); gap: 34px; margin-top: 0; }
+  .hero h1 { margin-bottom: 20px; font-size: min(18.6cqi, 96px); }
+  .hero-typing-line { margin: -4px 0 12px; font-size: 21px; }
+  .hero-description { max-width: 36ch; font-size: 14px; line-height: 1.75; }
+  .hero-brand-transition { top: 132px; left: 50%; width: 96px; }
+  .hero-carousel { max-width: 268px; justify-self: center; }
+  .hero-carousel-stage { margin-top: 0; padding: 7px; border-radius: 18px; }
+  .hero-carousel-viewport { border-radius: 12px; }
+  .hero-carousel-sticker { right: -18px; bottom: 22px; width: 72px; height: 72px; font-size: 14px; }
+  .carousel-audience-switch { gap: 8px; padding: 12px 0 0; }
+  .carousel-audience { min-height: 46px; gap: 6px; padding: 6px 10px; border-radius: 13px; }
+  .carousel-audience span { gap: 3px; }
+  .carousel-audience small { font-size: 9px; letter-spacing: .14em; }
+  .carousel-audience strong { font-size: 13px; }
+  .hero-carousel-meta { padding-top: 10px; }
+  .hero-carousel-caption { min-height: 24px; margin-bottom: 8px; font-size: 19px; }
+  .hero-carousel-controls { gap: 10px; }
+  .carousel-arrow, .carousel-toggle { display: grid; width: 42px; height: 42px; flex-basis: 42px; font-size: 16px; }
+  .carousel-toggle { font-size: 13px; }
+  .carousel-count { display: inline; font-size: 11px; }
+}
+
+@media (max-width: 760px) {
+  /* Liens plus faciles à toucher au doigt */
+  .footer-column { gap: 0; }
+  .footer-column h2 { margin-bottom: 6px; }
+  .footer-column a { display: inline-flex; align-items: center; min-height: 40px; font-size: 13px; }
+  .line-link { padding-top: 12px; }
+  .hero-bottom a { min-height: 44px; }
+}
+
+/* Programmes sur téléphone : deux affiches par ligne au lieu d’une */
+@media (max-width: 480px) {
+  .poster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
+  .poster-card { width: auto; margin-inline: 0; }
+  .poster-caption > span:first-child { font-size: 9px; letter-spacing: .1em; }
+  .poster-caption > span:last-child { font-size: 12px; }
+}
+
+/* Compléments : derniers petits textes et liens à agrandir au toucher */
+.hero-bottom a, .testimonial-flow-label, .testimonial-toggle, .contact-method small, .poster-caption > span:first-child { font-size: 11px; }
+@media (min-width: 761px) and (max-width: 950px) { .brand-name { font-size: 11px; } }
+@media (max-width: 1000px) {
+  .footer-column { gap: 0; }
+  .footer-column h2 { margin-bottom: 6px; }
+  .footer-column a { display: inline-flex; align-items: center; min-height: 40px; }
+  .merkez-next-steps a, .regulation-cta a, .faq-answer a, .contact-form-jump a, .pricing-fees-link, .ramadan-end-note a, .support-local-note a, .support-local-note summary, .regulation-contact, .audience-panel a, [data-audience-panel] a, .program-description summary { padding-block: 9px; }
+}
+@media (max-width: 480px) { .poster-caption > span:first-child { font-size: 10px; } }
+@media (min-width: 761px) { .carousel-audience small { font-size: 9px; } }
+@media (max-width: 620px) { .carousel-audience small { font-size: 10px; } }
+@media (max-width: 1000px) { .line-link { padding-top: 12px; } .hero-bottom a { min-height: 44px; } }
+
+/* ==========================================================================
+   Menu regroupé, bouton S’inscrire et page d’inscription (novembre 2026)
+   ========================================================================== */
+
+/* Bouton principal du menu */
+.site-nav .nav-cta { border-color: var(--gold-dark); border-radius: 999px; color: #fffefa; background: linear-gradient(135deg, #a88a4e, #8d713c); box-shadow: 0 8px 20px rgba(141,113,60,.22); transition: box-shadow .3s ease, filter .3s ease, translate .45s var(--ease); }
+.site-nav .nav-cta span { color: #fffefa; }
+.site-nav .nav-cta:hover { color: #fffefa; filter: brightness(1.08); box-shadow: 0 12px 26px rgba(141,113,60,.32); }
+
+/* Sous-menus */
+.nav-group { position: relative; }
+.nav-group-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 7px 0; border: 0; color: #514f47; background: none; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; cursor: pointer; transition: color .2s ease; }
+.nav-group-toggle:hover, .nav-group.is-current > .nav-group-toggle, .nav-group.is-open > .nav-group-toggle { color: var(--gold-dark); }
+.nav-group-toggle i { width: 6px; height: 6px; margin-top: -3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); transition: transform .3s var(--ease), margin .3s var(--ease); }
+.nav-group.is-open > .nav-group-toggle i { margin-top: 3px; transform: rotate(-135deg); }
+.nav-group-menu a { display: block; padding: 11px 13px; border-radius: 10px; color: #3b3932; font-size: 13px; font-weight: 500; white-space: nowrap; transition: background .2s ease, color .2s ease; }
+.nav-group-menu a:hover { color: #6b5529; background: rgba(183,151,89,.14); }
+.nav-group-menu a[aria-current="page"] { color: var(--gold-dark); font-weight: 600; background: rgba(183,151,89,.1); }
+
+@media (min-width: 951px) {
+  .nav-group-menu { position: absolute; z-index: 5; top: calc(100% + 14px); left: 50%; min-width: 216px; padding: 8px; border: 1px solid rgba(141,113,60,.2); border-radius: 16px; background: rgba(255,254,250,.98); box-shadow: 0 22px 48px rgba(52,44,29,.16); opacity: 0; visibility: hidden; translate: -50% 8px; transition: opacity .25s ease, translate .35s var(--ease), visibility .25s; }
+  .nav-group-menu::before { content: ""; position: absolute; inset: -18px 0 100% 0; }
+  .nav-group:hover > .nav-group-menu, .nav-group:focus-within > .nav-group-menu, .nav-group.is-open > .nav-group-menu { opacity: 1; visibility: visible; translate: -50% 0; }
+  .nav-group:hover > .nav-group-toggle i, .nav-group:focus-within > .nav-group-toggle i { margin-top: 3px; transform: rotate(-135deg); }
+  .site-nav { gap: clamp(16px, 2.3vw, 40px); }
+}
+@media (min-width: 951px) and (max-width: 1100px) {
+  .site-nav { gap: 16px; }
+  .site-nav > a, .nav-group-toggle { font-size: 11px; letter-spacing: .08em; }
+  .site-nav .nav-contact { min-height: 38px; gap: 8px; padding-inline: 14px; font-size: 11px; }
+}
+
+/* Menu mobile : groupes en accordéon, hauteur limitée à l’écran */
+@media (max-width: 950px) {
+  .site-nav { max-height: calc(100dvh - 70px); overflow-y: auto; overscroll-behavior: contain; }
+  .nav-group { border-bottom: 1px solid rgba(129,106,63,.12); }
+  .nav-group-toggle { width: 100%; justify-content: space-between; padding: 15px 2px; }
+  .nav-group-toggle i { margin-right: 6px; }
+  .nav-group-menu { display: none; padding: 0 0 10px 10px; }
+  .nav-group.is-open > .nav-group-menu { display: grid; gap: 2px; }
+  .nav-group-menu a { padding: 12px 12px; font-size: 14px; }
+  .site-nav .nav-cta { min-height: 50px; justify-content: center; gap: 12px; margin-top: 16px; font-size: 12px; }
+}
+
+/* Boutons de l’accueil */
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: 28px; }
+.hero-actions .line-link { margin-top: 0; }
+.hero-cta { display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 28px; border-radius: 999px; color: #fffefa; background: linear-gradient(135deg, #a88a4e, #8d713c); box-shadow: 0 14px 30px rgba(141,113,60,.28); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; transition: transform .35s var(--ease), box-shadow .35s ease, background .8s ease; }
+.hero-cta span { font-size: 15px; transition: transform .3s var(--ease); }
+.hero-cta:hover { transform: translateY(-3px); box-shadow: 0 20px 38px rgba(141,113,60,.36); }
+.hero-cta:hover span { transform: translate(3px, -3px); }
+.hero.is-women .hero-cta { background: linear-gradient(135deg, #c3958a, #a6756d); box-shadow: 0 14px 30px rgba(166,117,109,.28); }
+@media (max-width: 620px) { .hero-actions { margin-top: 22px; } .hero-cta { min-height: 50px; padding: 0 24px; } }
+
+/* Page d’inscription */
+.enroll { background: radial-gradient(ellipse at 78% 0%, rgba(221,205,164,.3), transparent 46%), linear-gradient(180deg, #fbfaf6, #f6f4ee 60%); padding-top: clamp(140px, 14vw, 190px); }
+.enroll-heading h1 { margin: 24px 0 0; font-size: clamp(46px, 7vw, 96px); font-weight: 700; letter-spacing: -.075em; line-height: .96; }
+.enroll-heading h1 span { color: var(--gold-dark); }
+.enroll-heading > p:last-child { max-width: 520px; margin: 24px 0 0; color: #6a665b; font-size: 16px; line-height: 1.8; }
+.enroll-steps { counter-reset: enroll-step; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 26px; margin: clamp(38px, 5vw, 60px) 0 0; padding: 0; list-style: none; }
+.enroll-steps li { counter-increment: enroll-step; padding: 20px 0 0; border-top: 1px solid rgba(141,113,60,.3); }
+.enroll-steps li::before { content: "0" counter(enroll-step); display: block; margin-bottom: 10px; color: var(--gold-dark); font-size: 11px; font-weight: 700; letter-spacing: .16em; }
+.enroll-steps strong { display: block; color: #33312b; font-size: 16px; font-weight: 600; letter-spacing: -.02em; }
+.enroll-steps span { display: block; margin-top: 6px; color: #777267; font-size: 13px; line-height: 1.65; }
+.enroll-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin-top: clamp(38px, 5vw, 60px); }
+.enroll-mode { padding: clamp(24px, 3vw, 36px); border: 1px solid rgba(166,133,73,.24); border-radius: 24px; background: linear-gradient(145deg, rgba(255,254,250,.98), rgba(250,247,239,.94)); box-shadow: 0 16px 38px rgba(61,48,25,.07), inset 0 1px rgba(255,255,255,.8); }
+.enroll-kicker { margin: 0; color: var(--gold-dark); font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.enroll-mode h2 { margin: 12px 0 6px; font-size: clamp(27px, 3.2vw, 40px); font-weight: 700; letter-spacing: -.055em; line-height: 1.05; }
+.enroll-mode-lead { margin: 0 0 24px; color: #777267; font-size: 14px; line-height: 1.7; }
+.enroll-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; min-height: 84px; margin-top: 12px; padding: 16px 18px 16px 20px; border: 1px solid rgba(141,113,60,.26); border-radius: 18px; background: rgba(255,255,255,.66); transition: transform .35s var(--ease), border-color .3s ease, box-shadow .35s ease, background .3s ease; }
+.enroll-card:hover { transform: translateY(-3px); border-color: rgba(141,113,60,.7); background: #fff; box-shadow: 0 16px 32px rgba(61,48,25,.11); }
+.enroll-card strong { display: block; color: #2f2d27; font-size: 17px; font-weight: 600; letter-spacing: -.02em; }
+.enroll-card small { display: block; margin-top: 5px; color: #7d786b; font-size: 12px; line-height: 1.5; }
+.enroll-card-arrow { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 50%; color: #fffefa; background: linear-gradient(135deg, #a88a4e, #8d713c); font-size: 16px; transition: transform .35s var(--ease); }
+.enroll-card:hover .enroll-card-arrow { transform: translate(3px, -3px); }
+.enroll-mode-onsite { border-color: rgba(224,206,166,.2); color: #f1e9d8; background: linear-gradient(150deg, #33312a, #25241f); box-shadow: 0 18px 42px rgba(37,36,31,.22); }
+.enroll-mode-onsite .enroll-kicker { color: #d7c18f; }
+.enroll-mode-onsite .enroll-mode-lead { color: #b9b2a2; }
+.enroll-mode-onsite .enroll-card { border-color: rgba(224,206,166,.22); background: rgba(255,255,255,.05); }
+.enroll-mode-onsite .enroll-card:hover { border-color: rgba(224,206,166,.7); background: rgba(255,255,255,.1); box-shadow: 0 16px 32px rgba(0,0,0,.25); }
+.enroll-mode-onsite .enroll-card strong { color: #f6efdf; }
+.enroll-mode-onsite .enroll-card small { color: #b9b2a2; }
+.enroll-mode-onsite .enroll-card-arrow { color: #25241f; background: linear-gradient(135deg, #ead9ad, #c9ad6f); }
+.enroll-forms-note { margin: 16px 0 0; color: #898476; font-size: 12px; }
+.enroll-reminder { margin-top: clamp(34px, 4vw, 52px); padding: clamp(22px, 3vw, 32px); border-left: 3px solid var(--gold); border-radius: 0 20px 20px 0; background: #efe9db; }
+.enroll-reminder h2 { margin: 0 0 12px; font-size: 20px; font-weight: 600; letter-spacing: -.03em; }
+.enroll-reminder p { max-width: 760px; margin: 0 0 10px; color: #55514a; font-size: 15px; line-height: 1.8; }
+.enroll-reminder strong { color: #2f2d27; font-weight: 600; }
+.enroll-reminder-links { display: flex; flex-wrap: wrap; gap: 6px 32px; margin-top: 12px; }
+.enroll-help { margin: 30px 0 0; color: #6a665b; font-size: 14px; line-height: 1.8; }
+.enroll-help a { display: inline-flex; align-items: center; gap: 8px; padding-block: 9px; color: var(--gold-dark); font-weight: 600; border-bottom: 0; }
+@media (max-width: 760px) {
+  .enroll { padding-top: 118px; }
+  .enroll-steps { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .enroll-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .enroll-card { min-height: 78px; padding: 14px 14px 14px 16px; }
+  .enroll-card strong { font-size: 16px; }
+}
+.site-nav > a.nav-cta, .site-nav > a.nav-cta[aria-current="page"], .site-nav > a.nav-cta:hover { color: #fffefa; text-decoration: none; }
+@media (min-width: 951px) { .site-header.fx-header-hidden .nav-group-menu { opacity: 0; visibility: hidden; } }
+@media (max-width: 950px) { .site-nav { background: #f6f4ee; } }
