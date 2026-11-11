@@ -761,6 +761,40 @@
     }
   }
 
+  /* Même trame dans la section des avis, arrêtée avant le bloc des chiffres */
+  var voices = root.querySelector(".student-voices");
+  if (voices && !reduced) {
+    var voicesLattice = document.createElement("div");
+    voicesLattice.className = "fx-lattice fx-lattice-voices";
+    voicesLattice.setAttribute("aria-hidden", "true");
+    var voicesLine = new Array(15).join("MERKEZ SALSABIL    ");
+    for (var voicesRow = 0; voicesRow < 44; voicesRow += 1) {
+      var voicesText = document.createElement("span");
+      voicesText.textContent = voicesLine;
+      voicesLattice.appendChild(voicesText);
+    }
+    voices.insertBefore(voicesLattice, voices.firstChild);
+    var voicesStats = voices.querySelector("[data-stats]");
+    var sizeVoicesLattice = function () {
+      if (!voicesStats) { voicesLattice.style.height = "100%"; return; }
+      var limit = voicesStats.getBoundingClientRect().top - voices.getBoundingClientRect().top;
+      voicesLattice.style.height = Math.max(0, Math.round(limit - 24)) + "px";
+    };
+    sizeVoicesLattice();
+    window.addEventListener("resize", sizeVoicesLattice, { passive: true });
+    window.addEventListener("load", sizeVoicesLattice);
+    if ("ResizeObserver" in window) new ResizeObserver(sizeVoicesLattice).observe(voices);
+    if (finePointer) {
+      voices.addEventListener("pointermove", function (event) {
+        var bounds = voicesLattice.getBoundingClientRect();
+        voicesLattice.style.setProperty("--fx-lx", (event.clientX - bounds.left) + "px");
+        voicesLattice.style.setProperty("--fx-ly", (event.clientY - bounds.top) + "px");
+      }, { passive: true });
+    } else {
+      voicesLattice.classList.add("is-drifting");
+    }
+  }
+
   if (finePointer && !reduced) {
     /* Inclinaison 3D de l’affiche */
     var carousel = root.querySelector(".hero-carousel");
@@ -923,4 +957,74 @@ window.addEventListener("pagereveal", function (event) {
       if (toggle) { toggle.focus(); toggle.blur(); }
     }
   });
+})();
+
+/* Le Merkez en chiffres : chaque chiffre défile comme un rouleau jusqu’à sa valeur. */
+(function () {
+  "use strict";
+  var stats = document.querySelector("[data-stats]");
+  if (!stats || window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+
+  Array.prototype.slice.call(stats.querySelectorAll(".stat")).forEach(function (stat, statIndex) {
+    stat.style.setProperty("--s", String(statIndex));
+    var value = stat.querySelector("[data-stat-value]");
+    if (!value) return;
+    var text = value.textContent.trim();
+    var visual = document.createElement("span");
+    visual.setAttribute("aria-hidden", "true");
+    visual.style.display = "contents";
+    var digitIndex = 0;
+    Array.from(text).forEach(function (character) {
+      if (/[0-9]/.test(character)) {
+        var column = document.createElement("span");
+        column.className = "stat-col";
+        var strip = document.createElement("span");
+        strip.className = "stat-strip";
+        strip.style.setProperty("--n", character);
+        strip.style.setProperty("--d", String(digitIndex));
+        digitIndex += 1;
+        for (var turn = 0; turn < 20; turn += 1) {
+          var digit = document.createElement("span");
+          digit.textContent = String(turn % 10);
+          strip.appendChild(digit);
+        }
+        column.appendChild(strip);
+        column.setAttribute("data-digit", character);
+        visual.appendChild(column);
+      } else if (character.trim()) {
+        var symbol = document.createElement("span");
+        symbol.className = "stat-sym" + (character === "%" ? " stat-sym-small" : "") + (character === "," ? " stat-sym-tight" : "");
+        symbol.textContent = character;
+        visual.appendChild(symbol);
+      }
+    });
+    var label = document.createElement("span");
+    label.className = "sr-only";
+    label.textContent = text;
+    value.textContent = "";
+    value.appendChild(label);
+    value.appendChild(visual);
+
+    // Chaque rouleau prend la largeur de son chiffre final, pour un espacement naturel (« 10 » et non « 1 0 »).
+    var fontSize = parseFloat(window.getComputedStyle(value).fontSize) || 1;
+    Array.prototype.slice.call(visual.querySelectorAll(".stat-col")).forEach(function (column) {
+      var probe = document.createElement("span");
+      probe.textContent = column.getAttribute("data-digit");
+      probe.style.cssText = "position:absolute;visibility:hidden;letter-spacing:0";
+      value.appendChild(probe);
+      var width = probe.getBoundingClientRect().width;
+      value.removeChild(probe);
+      if (width) column.style.width = (width / fontSize).toFixed(3) + "em";
+    });
+  });
+
+  stats.classList.add("has-motion");
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      stats.classList.add("is-in");
+      observer.disconnect();
+    });
+  }, { threshold: 0.3 });
+  observer.observe(stats);
 })();

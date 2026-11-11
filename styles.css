@@ -1653,3 +1653,125 @@ button:active, .nav-contact:active, .line-link:active { scale: .97; }
 .site-nav > a.nav-cta, .site-nav > a.nav-cta[aria-current="page"], .site-nav > a.nav-cta:hover { color: #fffefa; text-decoration: none; }
 @media (min-width: 951px) { .site-header.fx-header-hidden .nav-group-menu { opacity: 0; visibility: hidden; } }
 @media (max-width: 950px) { .site-nav { background: #f6f4ee; } }
+.regulation-arabic { margin: 6px 0 18px; color: var(--gold-dark); font: 600 clamp(20px, 2.6vw, 26px)/1.9 var(--arabic); text-align: center; }
+
+/* Titre d’accueil « Apprendre avec ikhlass, progresser avec méthode » :
+   plus petit pour respirer sous le logo, mots-clés dorés parcourus par un reflet. */
+.hero { --hero-accent: #8d713c; --hero-accent-light: #f0dfb4; }
+.hero.is-women { --hero-accent: #a6756d; --hero-accent-light: #f6d9d2; }
+.hero h1 { margin-left: -.04em; font-size: clamp(34px, 4.4vw, 64px); letter-spacing: -.07em; line-height: 1.02; }
+@supports (container-type: inline-size) {
+  .hero h1 { font-size: clamp(38px, 6.9cqi, 66px); }
+  @media (max-width: 1000px) { .hero h1 { font-size: clamp(30px, 10.6cqi, 60px); } }
+}
+@media (max-width: 1000px) { .hero h1 { margin-bottom: 20px; } }
+.hero h1.fx-split > span .fx-word { color: transparent !important; background: linear-gradient(100deg, var(--hero-accent) 0%, var(--hero-accent) 38%, var(--hero-accent-light) 50%, var(--hero-accent) 62%, var(--hero-accent) 100%) 100% 0 / 280% 100%; -webkit-background-clip: text; background-clip: text; padding: .08em .09em .12em 0; margin: -.08em -.09em -.12em 0; }
+.hero h1.fx-split.is-in > span .fx-word { animation: fx-char-in .9s var(--ease) both, fx-title-sheen 5.5s ease-in-out infinite; animation-delay: calc(var(--i) * 70ms + 120ms), 1.8s; }
+@keyframes fx-title-sheen { 0%, 55% { background-position: 100% 0; } 85%, 100% { background-position: 0 0; } }
+
+/* Le logo est désormais posé juste au-dessus du titre : l’écart reste le même à toutes les largeurs. */
+.hero-copy .hero-brand-transition { position: relative; top: auto; left: auto; width: clamp(104px, 11vw, 168px); margin: 0 0 clamp(10px, 1.4vw, 20px) -1.2%; transform: none; translate: none; }
+@media (max-width: 1000px) { .hero-copy .hero-brand-transition { width: clamp(88px, 15vw, 128px); } }
+@media (max-width: 620px) {
+  .hero { padding-top: 104px; }
+  .hero-copy .hero-brand-transition { width: 100px; margin-bottom: 12px; }
+}
+.hero-copy .hero-brand-transition { margin-bottom: clamp(18px, 2vw, 30px); }
+@media (max-width: 620px) { .hero-copy .hero-brand-transition { margin-bottom: 18px; } }
+@supports (container-type: inline-size) { @media (max-width: 1000px) { .hero h1 { font-size: clamp(30px, 10.6cqi, 48px); } } }
+
+/* Logo de l’accueil : un peu plus grand et centré au-dessus du titre */
+.hero-copy .hero-brand-transition { width: clamp(128px, 13.5vw, 204px); margin-inline: auto; }
+@media (max-width: 1000px) { .hero-copy .hero-brand-transition { width: clamp(108px, 18vw, 152px); } }
+@media (max-width: 620px) { .hero-copy .hero-brand-transition { width: 124px; } }
+/* Logo de l’accueil légèrement remonté */
+.hero-copy .hero-brand-transition { top: clamp(-28px, -1.8vw, -14px); }
+@media (max-width: 620px) { .hero-copy .hero-brand-transition { top: -12px; } }
+/* Logo de l’accueil remonté davantage */
+.hero-copy .hero-brand-transition { top: clamp(-54px, -3.6vw, -30px); }
+@media (max-width: 1000px) { .hero-copy .hero-brand-transition { top: -20px; margin-bottom: 30px; } }
+@media (max-width: 620px) { .hero-copy .hero-brand-transition { top: -14px; margin-bottom: 34px; } }
+/* Affiche du carrousel un peu plus petite, titre rapproché du logo */
+.hero-carousel { max-width: 304px; }
+.hero-copy .hero-brand-transition { margin-bottom: clamp(2px, .5vw, 8px); }
+@media (max-width: 1000px) { .hero-carousel { max-width: 250px; } .hero-copy .hero-brand-transition { margin-bottom: 14px; } }
+@media (max-width: 760px) { .hero-carousel { max-width: 100%; } }
+@media (max-width: 620px) { .hero-carousel { max-width: 240px; } .hero-copy .hero-brand-transition { margin-bottom: 18px; } }
+@media (min-width: 1001px) { .hero-carousel { max-width: 286px; } }
+
+/* ==========================================================================
+   Le Merkez en chiffres : compteurs à rouleaux sous les avis (novembre 2026)
+   ========================================================================== */
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: clamp(56px, 7vw, 100px) 0 0; }
+.stat { position: relative; display: flex; flex-direction: column; min-width: 0; padding: clamp(26px, 3vw, 40px) clamp(18px, 2.4vw, 36px) 4px; border-top: 1px solid rgba(117,98,62,.18); }
+.stat:first-child { padding-left: 0; }
+.stat + .stat { border-left: 1px solid rgba(117,98,62,.18); }
+.stat::before { content: ""; position: absolute; top: -1px; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--gold-dark), var(--gold-pale)); transform: scaleX(0); transform-origin: left; transition: transform 1.3s var(--ease); }
+.stat-value { order: 1; display: flex; align-items: baseline; margin: 0; color: var(--ink); font-size: clamp(54px, 8.2vw, 122px); font-weight: 800; letter-spacing: -.06em; line-height: 1.05; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.stat-label { order: 2; margin: 16px 0 0; color: var(--gold-dark); font-size: 13px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.stat-note { order: 3; max-width: 28ch; margin: 8px 0 0; color: #777267; font-size: 14px; line-height: 1.7; }
+.stat-col { display: inline-block; height: 1.05em; overflow: hidden; }
+.stat-strip { display: flex; flex-direction: column; transition: transform 2s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--d, 0) * 110ms + var(--s, 0) * 160ms); will-change: transform; }
+.stat-strip span { display: block; height: 1.05em; }
+.stat-sym { display: inline-block; color: var(--gold-dark); opacity: 0; transform: translateY(.28em) scale(.8); transition: opacity .7s ease, transform .9s var(--ease); transition-delay: calc(var(--s, 0) * 160ms + 500ms); }
+.stat-sym-small { margin-left: .12em; font-size: .46em; letter-spacing: 0; }
+.stats.has-motion .stat-label, .stats.has-motion .stat-note { opacity: 0; transform: translateY(16px); filter: blur(5px); transition: opacity .8s var(--ease), transform .8s var(--ease), filter .8s var(--ease); transition-delay: calc(var(--s, 0) * 160ms + 700ms); }
+.stats.has-motion .stat-note { transition-delay: calc(var(--s, 0) * 160ms + 860ms); }
+.stats.is-in .stat::before { transform: scaleX(1); transition-delay: calc(var(--s, 0) * 160ms); }
+.stats.is-in .stat-strip { transform: translateY(calc((10 + var(--n)) * -1.05em)); }
+.stats.is-in .stat-sym { opacity: 1; transform: none; }
+.stats.is-in .stat-label, .stats.is-in .stat-note { opacity: 1; transform: none; filter: none; }
+@media (max-width: 760px) {
+  .stats { grid-template-columns: minmax(0, 1fr); margin-top: 52px; }
+  .stat, .stat:first-child { padding: 24px 0 26px; }
+  .stat + .stat { border-left: 0; }
+  .stat-value { font-size: clamp(64px, 21vw, 104px); }
+  .stat-label { margin-top: 10px; }
+}
+.stat-value { font-variant-numeric: normal; letter-spacing: -.03em; }
+.stat-col { overflow: visible; overflow-y: clip; text-align: center; }
+.stat-strip { align-items: center; }
+.stat-sym-tight { margin-inline: -.05em -.02em; }
+
+/* Le Merkez en chiffres — version épurée : chiffres fins, filets discrets, beaucoup d’air */
+.stats { max-width: 940px; margin: clamp(64px, 8vw, 112px) auto 0; text-align: center; }
+.stat, .stat:first-child { align-items: center; padding: 4px clamp(14px, 3vw, 44px); border-top: 0; }
+.stat + .stat { border-left: 0; }
+.stat::before { display: none; }
+.stat + .stat::after { content: ""; position: absolute; top: 8%; bottom: 8%; left: 0; width: 1px; background: linear-gradient(180deg, transparent, rgba(141,113,60,.32) 30%, rgba(141,113,60,.32) 70%, transparent); transform: scaleY(0); transition: transform 1.2s var(--ease); transition-delay: calc(var(--s, 0) * 160ms); }
+.stats.is-in .stat + .stat::after, .stats:not(.has-motion) .stat + .stat::after { transform: scaleY(1); }
+.stat-value { justify-content: center; color: #33312b; font-size: clamp(40px, 5vw, 66px); font-weight: 300; letter-spacing: -.035em; line-height: 1.1; }
+.stat-col, .stat-strip span { height: 1.1em; }
+.stats.is-in .stat-strip { transform: translateY(calc((10 + var(--n)) * -1.1em)); }
+.stat-strip { transition-duration: 2.4s; }
+.stat-sym { color: var(--gold); font-weight: 300; }
+.stat-sym-small { margin-left: .14em; font-size: .5em; }
+.stat-label { margin-top: 20px; color: var(--gold-dark); font-size: 11px; font-weight: 600; letter-spacing: .28em; }
+.stat-label::before { content: ""; display: block; width: 28px; height: 1px; margin: 0 auto 18px; background: var(--gold); transform: scaleX(0); transition: transform 1s var(--ease); transition-delay: calc(var(--s, 0) * 160ms + 600ms); }
+.stats.is-in .stat-label::before, .stats:not(.has-motion) .stat-label::before { transform: scaleX(1); }
+.stat-note { max-width: 25ch; margin: 10px auto 0; color: #8b867a; font-size: 13px; line-height: 1.75; }
+@media (max-width: 760px) {
+  .stats { margin-top: 48px; text-align: left; border-bottom: 1px solid rgba(117,98,62,.16); }
+  .stat, .stat:first-child { display: grid; grid-template-columns: 128px minmax(0, 1fr); column-gap: 20px; align-items: center; padding: 22px 0; border-top: 1px solid rgba(117,98,62,.16); }
+  .stat + .stat::after, .stat-label::before { display: none; }
+  .stat-value { grid-row: 1 / span 2; justify-content: flex-start; font-size: 40px; }
+  .stat-label { grid-column: 2; align-self: end; margin: 0; }
+  .stat-note { grid-column: 2; align-self: start; max-width: none; margin: 6px 0 0; }
+}
+.stat-sym-tight { margin-inline: .01em .03em; }
+.testimonial-controls { justify-content: flex-end; }
+
+/* Trame MERKEZ SALSABIL dans la section des avis : limitée en hauteur, fondue avant les chiffres */
+.student-voices { isolation: isolate; }
+.fx-lattice-voices { inset: 0 0 auto 0; justify-content: flex-start; padding-top: 8px;
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 0%, rgba(0,0,0,.5) 45%, transparent 100%), linear-gradient(180deg, #000 calc(100% - 110px), transparent);
+  mask-image: radial-gradient(circle closest-side, #000 0%, rgba(0,0,0,.5) 45%, transparent 100%), linear-gradient(180deg, #000 calc(100% - 110px), transparent);
+  -webkit-mask-size: 620px 620px, 100% 100%; mask-size: 620px 620px, 100% 100%;
+  -webkit-mask-position: calc(var(--fx-lx, -900px) - 310px) calc(var(--fx-ly, -900px) - 310px), 0 0; mask-position: calc(var(--fx-lx, -900px) - 310px) calc(var(--fx-ly, -900px) - 310px), 0 0;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-composite: source-in; mask-composite: intersect; }
+@media (max-width: 760px) { .fx-lattice-voices { -webkit-mask-size: 380px 380px, 100% 100%; mask-size: 380px 380px, 100% 100%; } }
+.fx-lattice-voices.is-drifting { animation-name: fx-lattice-drift-voices; }
+@keyframes fx-lattice-drift-voices { from { -webkit-mask-position: -10% 5%, 0 0; mask-position: -10% 5%, 0 0; } to { -webkit-mask-position: 110% 60%, 0 0; mask-position: 110% 60%, 0 0; } }
+.enroll-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.enroll-badge { padding: 5px 11px; border: 1px solid rgba(224,206,166,.4); border-radius: 999px; color: #f1e3bd; background: rgba(224,206,166,.1); font-size: 10px; letter-spacing: .12em; }

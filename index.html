@@ -17,7 +17,7 @@
   <meta name="twitter:card" content="summary">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&amp;family=Noto+Naskh+Arabic:wght@400;600;700&amp;family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&amp;family=Noto+Naskh+Arabic:wght@400;600;700&amp;family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
 </head>
@@ -63,17 +63,16 @@
 <section class="hero" id="accueil" aria-labelledby="hero-title">
         <div class="hero-light" aria-hidden="true"></div>
         <div class="hero-theme-wash" aria-hidden="true"></div>
-        <div class="hero-brand-transition" data-brand-transition aria-hidden="true">
-          <div class="hero-brand-aura"></div>
-          <img class="hero-brand-logo hero-brand-logo-men" src="assets/affiches/logo-merkez-salsabil-transparent.webp" alt="">
-          <img class="hero-brand-logo hero-brand-logo-women" src="assets/affiches/logo-merkez-salsabil-femmes-transparent.webp" alt="">
-          <span class="hero-brand-shine"></span>
-          <span class="hero-brand-particles" data-brand-particles></span>
-        </div>
-        <div class="hero-topline"><span></span><span>APPRENDRE · COMPRENDRE · PROGRESSER</span></div>
         <div class="hero-content">
           <div class="hero-copy" data-reveal>
-            <h1 id="hero-title">APPRENDRE<br><span>AVEC SENS.</span></h1>
+            <div class="hero-brand-transition" data-brand-transition aria-hidden="true">
+              <div class="hero-brand-aura"></div>
+              <img class="hero-brand-logo hero-brand-logo-men" src="assets/affiches/logo-merkez-salsabil-transparent.webp" alt="">
+              <img class="hero-brand-logo hero-brand-logo-women" src="assets/affiches/logo-merkez-salsabil-femmes-transparent.webp" alt="">
+              <span class="hero-brand-shine"></span>
+              <span class="hero-brand-particles" data-brand-particles></span>
+            </div>
+            <h1 id="hero-title">APPRENDRE AVEC <span>IKHLASS,</span><br>PROGRESSER AVEC <span>MÉTHODE.</span></h1>
             <div class="hero-typing-line" aria-hidden="true"><span data-typing-text>Le Coran.</span><span class="hero-typing-cursor"></span></div>
             <span class="sr-only">Nos enseignements : le Coran, la Sunnah, la langue arabe et les sciences religieuses.</span>
             <p class="hero-description">Un centre dédié à l’apprentissage de la langue arabe, du Coran et des sciences religieuses.</p>
@@ -237,11 +236,29 @@
               </div>
             </div>
             <div class="testimonial-controls" role="group" aria-label="Commandes du défilement des avis">
-              <span class="testimonial-flow-label"><span aria-hidden="true">✳</span> Neuf retours d’élèves · défilement continu</span>
               <button class="testimonial-toggle" type="button" data-testimonial-toggle aria-pressed="false" aria-label="Mettre le défilement en pause"><span aria-hidden="true">Ⅱ</span><span class="testimonial-toggle-label">Pause</span></button>
             </div>
           </div>
           <p class="student-voices-note">Les avis sont publiés sans nom afin de préserver la confidentialité des élèves.</p>
+        </div>
+        <div class="section-shell">
+          <dl class="stats" data-stats aria-label="Le Merkez en chiffres">
+            <div class="stat">
+              <dd class="stat-value" data-stat-value>+90</dd>
+              <dt class="stat-label">Élèves</dt>
+              <dd class="stat-note">Accueillis et accompagnés au sein du Merkez</dd>
+            </div>
+            <div class="stat">
+              <dd class="stat-value" data-stat-value>+97,5 %</dd>
+              <dt class="stat-label">Satisfaction</dt>
+              <dd class="stat-note">Parmi les retours connus</dd>
+            </div>
+            <div class="stat">
+              <dd class="stat-value" data-stat-value>10</dd>
+              <dt class="stat-label">Enseignants</dt>
+              <dd class="stat-note">Mobilisés pour accompagner et suivre nos élèves</dd>
+            </div>
+          </dl>
         </div>
       </section>
     </main>
