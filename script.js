@@ -237,7 +237,7 @@
           testimonialToggle.setAttribute("aria-pressed", String(testimonialUserPaused));
           testimonialToggle.setAttribute("aria-label", testimonialUserPaused ? "Reprendre le défilement continu" : "Mettre le défilement en pause");
           if (label) label.textContent = testimonialUserPaused ? "Reprendre" : "Pause";
-          if (icon) icon.textContent = testimonialUserPaused ? "▶" : "Ⅱ";
+          if (icon) icon.textContent = testimonialUserPaused ? "▶︎" : "Ⅱ";
           updateTestimonialMotion();
         });
       }
@@ -527,7 +527,7 @@
         userPaused = !userPaused;
         toggle.setAttribute("aria-pressed", String(userPaused));
         toggle.setAttribute("aria-label", userPaused ? "Reprendre le défilement automatique" : "Mettre en pause le défilement automatique");
-        toggle.textContent = userPaused ? "▶" : "Ⅱ";
+        toggle.textContent = userPaused ? "▶︎" : "Ⅱ";
         syncCarouselTimer();
       });
       carousel.addEventListener("mouseenter", function () { pointerInside = true; syncCarouselTimer(); });
@@ -1027,4 +1027,27 @@ window.addEventListener("pagereveal", function (event) {
     });
   }, { threshold: 0.3 });
   observer.observe(stats);
+})();
+
+/* Page Programmes : une rubrique sans affiche pour la section choisie est masquée, et le compteur suit. */
+(function () {
+  "use strict";
+  var sections = Array.prototype.slice.call(document.querySelectorAll("[data-program-section]"));
+  if (!sections.length) return;
+  function refresh() {
+    sections.forEach(function (section) {
+      var visible = Array.prototype.slice.call(section.querySelectorAll(".poster-card")).filter(function (card) { return !card.hidden; }).length;
+      section.hidden = visible === 0;
+      var count = section.querySelector("[data-program-count]");
+      if (count) count.textContent = visible + " affiche" + (visible > 1 ? "s" : "");
+    });
+    Array.prototype.slice.call(document.querySelectorAll(".program-chip")).forEach(function (chip) {
+      var target = document.querySelector(chip.getAttribute("href"));
+      chip.hidden = !!(target && target.hidden);
+    });
+  }
+  Array.prototype.slice.call(document.querySelectorAll(".audience-filter")).forEach(function (button) {
+    button.addEventListener("click", function () { window.setTimeout(refresh, 0); });
+  });
+  refresh();
 })();
