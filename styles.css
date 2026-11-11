@@ -1803,3 +1803,14 @@ button:active, .nav-contact:active, .line-link:active { scale: .97; }
   .program-section-head { flex-wrap: wrap; gap: 6px 12px; }
 }
 .program-chip[hidden] { display: none; }
+
+/* Page Tarifs : la grille d’abord, puis la réduction fratrie et l’invocation */
+.pricing-layout-grid-first { grid-template-columns: minmax(280px, .78fr) minmax(0, 1fr); align-items: center; }
+.pricing-layout-grid-first .pricing-sibling { margin-top: 0; padding-top: 0; border-top: 0; }
+@media (max-width: 1000px) { .pricing-layout-grid-first { grid-template-columns: minmax(250px, .8fr) minmax(0, 1fr); } }
+@media (max-width: 760px) { .pricing-layout-grid-first { grid-template-columns: minmax(0, 1fr); } }
+.intensive-quote p + p { margin-top: 8px; }
+
+/* Mots affichés selon la disposition (grille à côté sur grand écran, en dessous sur petit) */
+.only-narrow { display: none; }
+@media (max-width: 760px) { .only-wide { display: none; } .only-narrow { display: inline; } }

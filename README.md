@@ -13,7 +13,6 @@ Site vitrine multipage statique du Merkez Salsabil, en HTML, CSS et JavaScript. 
 - `index.html` — page d’accueil et aperçu de l’approche du Merkez.
 - `le-merkez.html` — présentation de l’institut, fondements, méthodologie, textes cités et savants de référence.
 - `enseignements.html` — disciplines et matières enseignées.
-- `programmes.html` — galerie de flyers séparée entre Hommes et Femmes.
 - `tarifs.html` — grilles tarifaires, annonce de réduction fratrie et sessions intensives.
 - `soutenir.html` — choix du moyen de don avec les logos PayPal et Revolut, consigne PayPal pour les dons personnels et projet mensuel de mushafs et de jilbebs pour les élèves qui en ont besoin.
 - `lecture-ramadan.html` — programme de lecture du Coran sur 30 jours, avec suivi mémorisé dans le navigateur.
@@ -44,3 +43,7 @@ Bloc « Corrections responsive » à la fin de `styles.css` : le titre d’accue
 - Menu : Accueil, Le Merkez, **Cours** (Enseignements, Programmes, Tarifs), **Ressources** (Lecture Ramadan, Questions fréquentes, Règlement intérieur), Contact, Soutenir, et le bouton **S’inscrire**. Sur mobile, les deux groupes sont des accordéons.
 - `inscription.html` : les quatre formulaires Google Forms (distanciel ou présentiel, en classe ou en individuel/duo/trio) et le rappel sur l’engagement. Pour changer un lien de formulaire, modifier le `href` de la carte correspondante dans cette page.
 - Le pied de page contient aussi YouTube et TikTok, et un lien « Inscription ».
+
+## Page Programmes retirée (novembre 2026)
+
+La page `programmes.html` a été supprimée ; son ancienne adresse redirige vers `enseignements.html` (voir `vercel.json`). Les affiches restent visibles dans le carrousel de l’accueil et dans `assets/affiches/`.

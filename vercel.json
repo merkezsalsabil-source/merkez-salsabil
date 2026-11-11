@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/programmes.html", "destination": "/enseignements.html", "permanent": false },
+    { "source": "/programmes", "destination": "/enseignements.html", "permanent": false }
+  ]
+}

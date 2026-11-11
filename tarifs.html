@@ -41,7 +41,6 @@
             <button class="nav-group-toggle" type="button" aria-expanded="false" aria-controls="nav-cours">Cours <i aria-hidden="true"></i></button>
             <div class="nav-group-menu" id="nav-cours">
               <a href="enseignements.html#enseignements">Enseignements</a>
-              <a href="programmes.html#affiches">Programmes</a>
               <a href="tarifs.html#tarifs" aria-current="page">Tarifs</a>
             </div>
           </div>
@@ -67,21 +66,17 @@
             <div><p class="section-index">04 <span>— Informations tarifaires</span></p><h2 id="pricing-title">La grille<br><span>tarifaire.</span></h2></div>
             <p>Les formules, les tarifs et les conditions de la réduction fratrie, réunis au même endroit.</p>
           </div>
-          <div class="pricing-layout">
+          <div class="pricing-layout pricing-layout-grid-first">
+            <div class="pricing-poster-wrap" data-reveal>
+              <p class="pricing-poster-label">La grille des formules</p>
+              <button class="pricing-poster poster-trigger" type="button" data-image="assets/affiches/grille-tarifaire.webp" data-title="Grille tarifaire mensuelle" aria-label="Agrandir la grille tarifaire">
+                <img src="assets/affiches/grille-tarifaire.webp" alt="Grille tarifaire mensuelle des cours individuels, en duo, en trio et collectifs" loading="lazy">
+                <span class="pricing-poster-cta">Consulter la grille <i aria-hidden="true">↗︎</i></span>
+              </button>
+              <p class="pricing-poster-note">Appuie sur l’affiche pour la consulter en grand format.</p>
+            </div>
+
             <article class="pricing-announcement" data-reveal>
-              <p class="pricing-eyebrow">
-                <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 13v6h5l12 7V6L9 13H4Z"/><path d="m9 19 3 8h5l-4-6M24 12l4-3M25 16h5M24 20l4 3"/></svg>
-                <span>Information aux familles</span>
-                <svg class="pricing-eyebrow-star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.7 6.1L21 5.5l-2.6 6.3L24 14l-6.2 2.4 2.4 6.1-6.2-2.8L12 26l-2-6.3-6.2 2.8 2.4-6.1L0 14l5.6-2.2L3 5.5l6.3 2.6L12 2Z" transform="translate(1 -2) scale(.92)"/></svg>
-              </p>
-              <h3>Mise en place d’une<br><span>grille tarifaire.</span></h3>
-              <p class="pricing-intro">Dans le cadre du développement <strong>du Merkez Salsabil</strong> et afin de <strong>proposer une organisation plus claire de nos différentes formules d’enseignement</strong>, une grille tarifaire sera mise en place à compter du mois de juillet.</p>
-
-              <div class="pricing-preserved">
-                <span class="pricing-icon-round" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 2.6 6.1L21 5.5l-2.6 6.3L24 14l-6.2 2.4 2.4 6.1-6.2-2.8L12 26l-2-6.3-6.2 2.8 2.4-6.1L0 14l5.6-2.2L3 5.5l6.3 2.6L12 2Z" transform="translate(1 -2) scale(.92)"/></svg></span>
-                <p>Les élèves actuellement inscrits conserveront leurs tarifs actuels tant que <strong>leur inscription reste active et sans interruption.</strong></p>
-              </div>
-
               <div class="pricing-sibling">
                 <div class="pricing-sibling-heading">
                   <span class="pricing-icon-round pricing-alert" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/><path d="M12 7v6M12 17h.01"/></svg></span>
@@ -96,15 +91,6 @@
 
               <p class="pricing-dua">Nous demandons à Allah <span lang="ar" dir="rtl">سبحانه وتعالى</span> de mettre <strong>la bénédiction dans cet enseignement</strong> et de nous permettre de continuer à transmettre la langue arabe, le Coran et les sciences islamiques dans les meilleures conditions.</p>
             </article>
-
-            <div class="pricing-poster-wrap" data-reveal>
-              <p class="pricing-poster-label">La grille des formules</p>
-              <button class="pricing-poster poster-trigger" type="button" data-image="assets/affiches/grille-tarifaire.webp" data-title="Grille tarifaire mensuelle" aria-label="Agrandir la grille tarifaire">
-                <img src="assets/affiches/grille-tarifaire.webp" alt="Grille tarifaire mensuelle des cours individuels, en duo, en trio et collectifs" loading="lazy">
-                <span class="pricing-poster-cta">Consulter la grille <i aria-hidden="true">↗︎</i></span>
-              </button>
-              <p class="pricing-poster-note">Appuie sur l’affiche pour la consulter en grand format.</p>
-            </div>
           </div>
 
           <aside class="pricing-fees" id="frais-inscription" aria-labelledby="pricing-fees-title" data-reveal>
@@ -169,12 +155,13 @@
 
                 <div class="intensive-hours">
                   <span class="intensive-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V11M10 19V6M16 19v-5M22 19V3M2 19h21"/></svg></span>
-                  <p>Les cours peuvent être organisés à raison de <strong>2 à 4 heures par jour</strong>. Les horaires sont définis selon les disponibilités des élèves et des enseignants.</p>
+                  <p>Les cours peuvent être organisés à raison de <strong>1 à 4 heures par jour, plusieurs jours dans la semaine</strong>. Les horaires sont définis selon les disponibilités des élèves et des enseignants.</p>
                 </div>
 
                 <section class="intensive-quote">
                   <h4>Des tarifs adaptés à chaque projet</h4>
                   <p>Les tarifs varient selon le volume horaire, le format choisi et la durée de la formation. <strong>Chaque demande fait l’objet d’un devis personnalisé</strong>, afin de proposer une formule adaptée aux besoins de l’élève.</p>
+                  <p>La grille <span class="only-wide">ci-contre</span><span class="only-narrow">ci-dessous</span> est donnée à titre d’exemple : elle présente les tarifs de certains programmes intensifs.</p>
                 </section>
 
                 <p class="intensive-family-note">
@@ -189,12 +176,12 @@
               </div>
 
               <div class="intensive-poster-wrap" data-reveal>
-                <p class="pricing-poster-label">Tarifs hebdomadaires</p>
+                <p class="pricing-poster-label">Exemple de tarifs hebdomadaires</p>
                 <button class="pricing-poster intensive-poster poster-trigger" type="button" data-image="assets/affiches/sessions-intensives-tarifs-hebdomadaires.webp" data-title="Sessions intensives — tarifs hebdomadaires" aria-label="Agrandir les tarifs des sessions intensives">
                   <img src="assets/affiches/sessions-intensives-tarifs-hebdomadaires.webp" alt="Grille tarifaire des sessions intensives : formules cinq ou sept jours par semaine, en individuel, duo, trio et collectif" loading="lazy">
-                  <span class="pricing-poster-cta">Consulter les tarifs intensifs <i aria-hidden="true">↗︎</i></span>
+                  <span class="pricing-poster-cta">Voir l’exemple de tarifs <i aria-hidden="true">↗︎</i></span>
                 </button>
-                <p class="pricing-poster-note">Clique sur l’affiche pour la consulter en grand format.</p>
+                <p class="pricing-poster-note">Exemple pour certains programmes intensifs ; le tarif définitif est établi sur devis. Clique sur l’affiche pour la consulter en grand format.</p>
               </div>
             </div>
           </div>
@@ -214,7 +201,6 @@
         <h2>Programmes</h2>
         <a href="enseignements.html#enseignements">Langue arabe</a>
         <a href="enseignements.html#enseignements">Coran &amp; tajwīd</a>
-        <a href="programmes.html#affiches">Cours femmes &amp; hommes</a>
         <a href="lecture-ramadan.html#lecture-ramadan">Lecture Ramadan</a>
         <a href="tarifs.html#tarifs">Tarifs</a>
         <a href="inscription.html#inscription">Inscription</a>
